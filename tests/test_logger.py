@@ -1,6 +1,5 @@
 import logging
 import pytest
-from pathlib import Path
 
 from src.logger import setup_logger, log_signal, LOG_FILE
 

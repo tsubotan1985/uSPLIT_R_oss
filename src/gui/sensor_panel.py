@@ -1,6 +1,5 @@
 from typing import Any
 
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 
@@ -76,4 +75,4 @@ class SensorPanel(QWidget):
     def update_status(self, connected: bool) -> None:
         color = "green" if connected else "red"
         self.status_label.setStyleSheet(f"color: {color};")
-        self.status_label.setText(f"Status: \u25cf")
+        self.status_label.setText("Status: \u25cf")

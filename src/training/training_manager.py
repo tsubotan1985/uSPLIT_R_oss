@@ -2,11 +2,11 @@ import logging
 from pathlib import Path
 from typing import Callable
 
-import numpy as np
 
 from src.training.data_preparer import prepare_from_folders, split_train_test
 from src.training.model_saver import save
 from src.training.model_trainer import train, optimize_lgbm, evaluate
+from src.config import Config
 
 
 class TrainingManager:
@@ -23,7 +23,22 @@ class TrainingManager:
         n_trials: int = 0,
     ) -> dict:
         self._progress("Preparing data...", 10)
-        features, labels = prepare_from_folders(alpha_dir, beta_dir, gamma_dir, filter_threshold)
+        cfg = Config()
+        skipped = 0
+
+        def _on_skip(path: Path, reason: str) -> None:
+            nonlocal skipped
+            skipped += 1
+            self._progress(f"skip: {path.name}", 10)
+
+        features, labels = prepare_from_folders(
+            alpha_dir, beta_dir, gamma_dir, filter_threshold,
+            dead_pixel_threshold=cfg.get("dead_pixel_threshold"),
+            edge_margin=cfg.get("edge_margin_px"),
+            on_skip=_on_skip,
+        )
+        if skipped:
+            logging.getLogger("usplit").warning(f"学習データ: 読み込めずスキップしたファイル {skipped} 件")
         if len(features) == 0:
             raise ValueError("No valid features extracted")
 

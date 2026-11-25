@@ -1,18 +1,11 @@
-from unittest.mock import MagicMock, patch
 from pathlib import Path
 
 import numpy as np
-import pytest
 from PySide6.QtCore import QCoreApplication
 
 from src.analysis.analysis_thread import AnalysisThread
 from src.analysis.classifier import Classifier
 from src.analysis.time_series import TimeSeriesAggregator
-
-
-@pytest.fixture(scope="session")
-def qapp() -> QCoreApplication:
-    return QCoreApplication.instance() or QCoreApplication([])
 
 
 class TestAnalysisThread:

@@ -1,17 +1,11 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from pathlib import Path
 
 import numpy as np
-import pytest
 from PySide6.QtCore import QCoreApplication
 
 from src.acquisition.measurement_thread import MeasurementThread
 from src.acquisition.file_saver import create_measurement_dir, save_frame
-
-
-@pytest.fixture(scope="session")
-def qapp() -> QCoreApplication:
-    return QCoreApplication.instance() or QCoreApplication([])
 
 
 class TestFileSaver:

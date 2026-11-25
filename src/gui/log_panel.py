@@ -1,7 +1,7 @@
 from typing import Any
 from collections import deque
 
-from PySide6.QtCore import QObject, QTimer, Signal, Slot
+from PySide6.QtCore import QTimer, Signal, Slot
 from PySide6.QtWidgets import QTextEdit
 
 from src.logger import log_signal

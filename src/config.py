@@ -9,12 +9,20 @@ CONFIG_DIR = Path(os.environ.get("APPDATA", ".")) / APP_NAME
 CONFIG_FILE = CONFIG_DIR / "config.json"
 
 DEFAULTS = {
-    "save_dir": str(Path.home() / "measurements"),
+    "save_dir": str(Path.home() / "uSPLIT-R"),
     "interval": 1.0,
     "model_path": "",
     "window_geometry": None,
     "log_level": "INFO",
     "alpha_filter_threshold": 1000,
+    "dead_pixel_threshold": 11000,
+    "edge_margin_px": 2,
+    "rule_based": {
+        "alpha_max_intensity": 5000,
+        "alpha_max_area": 5,
+        "beta_min_area": 5,
+        "beta_min_intensity": 2000,
+    },
 }
 
 

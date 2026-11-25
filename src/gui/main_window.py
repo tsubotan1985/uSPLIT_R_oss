@@ -3,7 +3,6 @@ import threading
 from pathlib import Path
 from typing import Any
 
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
@@ -234,7 +233,7 @@ class MainWindow(QMainWindow):
         self._pixet_mgr: PixetManager | None = None
         self._multi_ctrl: MultiDeviceController | None = None
         self._meas_thread: MeasurementThread | None = None
-        self._classifier = Classifier()
+        self._classifier = Classifier(rule_thresholds=self._config.get("rule_based"))
         self._ts_frames: dict[str, list[int]] = {}
         self._ts_alpha: dict[str, list[int]] = {}
         self._ts_beta: dict[str, list[int]] = {}
@@ -280,7 +279,7 @@ class MainWindow(QMainWindow):
     def _build_measurement_tab(self) -> None:
         tab = QWidget()
         layout = QVBoxLayout(tab)
-        self.meas_ctrl = MeasurementControl()
+        self.meas_ctrl = MeasurementControl(self._config)
         layout.addWidget(self.meas_ctrl)
 
         sensors = QHBoxLayout()
@@ -320,13 +319,18 @@ class MainWindow(QMainWindow):
                 disp = SENSOR_ID_MAP.get(sid)
                 if disp and disp in self.sensor_panels:
                     self.sensor_panels[disp].update_status(True)
+            self.meas_ctrl.set_hardware_available(True)
         except Exception as e:
             self._logger.warning(f"Hardware init failed: {e}")
+            # SDK 無しでも学習・可視化は使える。測定だけ明示的に閉じる
+            self.meas_ctrl.set_hardware_available(False, str(e))
+            self.tabs.setTabText(0, "Measurement (no hardware)")
 
     def _start_measurement(self, interval: float, save_dir: str, comment: str = "") -> None:
         self._logger.info("Start requested")
         if self._multi_ctrl is None:
             self._logger.error("No hardware connected")
+            self.meas_ctrl.restore_start_button()
             return
         self._ts_frames.clear()
         self._ts_alpha.clear()
@@ -441,9 +445,11 @@ class MainWindow(QMainWindow):
             try:
                 self._classifier.load_model(saved)
                 self.meas_ctrl.select_model_by_path(saved)
+                self.meas_ctrl.set_classifier_label(saved)
                 self._logger.info(f"Auto-loaded model: {saved}")
             except Exception as e:
                 self._logger.warning(f"Failed to auto-load model: {e}")
+                self.meas_ctrl.set_classifier_label(None)
 
     def _clear_plot(self) -> None:
         self._ts_frames.clear()
@@ -472,11 +478,13 @@ class MainWindow(QMainWindow):
         try:
             self._classifier.load_model(model_path)
             self._analysis_worker._classifier = self._classifier
+            self.meas_ctrl.set_classifier_label(model_path)
             self._config.set("model_path", model_path)
             self._config.save()
             self._logger.info(f"Model loaded: {model_path}")
         except Exception as e:
             self._logger.warning(f"Failed to load model: {e}")
+            self.meas_ctrl.set_classifier_label(None)
 
     def _start_training(self, alpha: str, beta: str, gamma: str, name: str, threshold: float, n_trials: int = 0) -> None:
         self.training_tab.train_btn.setEnabled(False)

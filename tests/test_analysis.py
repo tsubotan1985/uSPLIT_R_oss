@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from src.analysis.spectrum import compute_energy_spectrum
 from src.analysis.time_series import TimeSeriesAggregator

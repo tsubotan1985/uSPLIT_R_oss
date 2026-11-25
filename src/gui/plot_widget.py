@@ -1,6 +1,5 @@
 from typing import Any
 
-import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 

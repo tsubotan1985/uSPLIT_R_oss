@@ -1,5 +1,7 @@
 # microSPLIT-R
 
+[![CI](https://github.com/tsubotan1985/uSPLIT_R_oss/actions/workflows/ci.yml/badge.svg)](https://github.com/tsubotan1985/uSPLIT_R_oss/actions/workflows/ci.yml)
+
 Windows 上で **MiniPIX TPX (Standard) 3台** を同時接続し、連続データ取得と準リアルタイム α/β/γ 分類分析を行う Python GUI アプリケーションです。
 
 > **このリポジトリは OSS 版です。** 誰でも fork / 改変 / 再配布できます（MIT）。
@@ -226,6 +228,32 @@ uSPLIT_R/
 - **スレッドセーフ**: 全ハードウェアアクセスを `threading.Lock` で保護
 - **デーモンスレッド**: HitmapWorker は daemon=True でウィンドウ終了時に自動終了
 
+## 設定ファイル（config.json）
+
+`%APPDATA%\microSPLIT-R\config.json` に保存されます。GUI から変えられる項目以外は直接編集してください。
+
+| キー | 既定値 | 内容 |
+|---|---|---|
+| `save_dir` | `~/uSPLIT-R` | 測定データの保存先（GUI の Save to と連動） |
+| `interval` | `1.0` | 取得インターバル（秒） |
+| `model_path` | `""` | 起動時に自動で読み込む学習済みモデル |
+| `alpha_filter_threshold` | `1000` | 学習時、`intensity_max` がこれ未満の α クラスタを除外 |
+| `dead_pixel_threshold` | `11000` | この値を超えるピクセルをデッドピクセルとして 0 にする |
+| `edge_margin_px` | `2` | 端から何ピクセルを捨てるか |
+| `rule_based` | 下記 | モデル未使用時のルールベース分類の閾値 |
+
+```json
+"rule_based": {
+  "alpha_max_intensity": 5000,
+  "alpha_max_area": 5,
+  "beta_min_area": 5,
+  "beta_min_intensity": 2000
+}
+```
+
+学習済みモデルは読み込み時に**特徴量セットの互換性を検査**します。現行の 14 特徴量と違うモデルは
+`ModelFeatureMismatch` となり、GUI には「モデル非互換」の警告が出て適用されません。
+
 ## テスト
 
 ```bash
@@ -246,7 +274,7 @@ pytest tests/ -v
 
 `models/` には参考用の学習済み LightGBM モデルが2件入っています（メタデータ JSON 付き）。
 
-- `LGBM_20260120_142338.joblib` — 14特徴量（`area_bbox`, `fractal_dimension` など DICAS-ML 系の特徴量セット）で学習。**現在の `feature_extractor.py` が出力する14特徴量とは名前が一致しない**ため、そのままでは正しく推論できません（Issue で扱っています）。
+- `LGBM_20260120_142338.joblib` — 14特徴量（`area_bbox`, `fractal_dimension` など DICAS-ML 系の特徴量セット）で学習。**現在の `feature_extractor.py` が出力する14特徴量とは名前が一致しない**ため、読み込み時に `ModelFeatureMismatch` となり GUI から適用できません（互換性検査を入れたので黙って誤推論することはありません）。
 - `LGBM20260526tentativeusplit.joblib` — 現行の特徴量セットで学習した暫定モデル。精度 0.91 だが β の precision 0.38 と弱い。
 
 モデルを読み込む前に `models/*_metadata.json` の `selected_features` と

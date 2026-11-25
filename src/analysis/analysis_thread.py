@@ -1,15 +1,12 @@
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 from PySide6.QtCore import QThread, Signal
 
 from src.analysis.data_loader import load_out_file, preprocess
 from src.analysis.feature_extractor import extract_features
 from src.analysis.classifier import Classifier
-from src.analysis.spectrum import compute_energy_spectrum
 from src.analysis.time_series import TimeSeriesAggregator
-from skimage.measure import label
 
 
 class AnalysisThread(QThread):

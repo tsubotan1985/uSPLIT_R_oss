@@ -2,7 +2,7 @@ import json
 import pytest
 from pathlib import Path
 
-from src.config import Config, DEFAULTS
+from src.config import Config
 
 
 @pytest.fixture
@@ -15,7 +15,14 @@ class TestConfigDefaults:
     def test_load_returns_defaults_when_no_file(self, tmp_config: Config) -> None:
         assert tmp_config.get("interval") == 1.0
         assert tmp_config.get("log_level") == "INFO"
-        assert tmp_config.get("save_dir") == str(Path.home() / "measurements")
+        assert tmp_config.get("save_dir") == str(Path.home() / "uSPLIT-R")
+
+    def test_rule_based_thresholds_have_defaults(self, tmp_config: Config) -> None:
+        rule = tmp_config.get("rule_based")
+        assert rule["alpha_max_intensity"] == 5000
+        assert rule["alpha_max_area"] == 5
+        assert rule["beta_min_area"] == 5
+        assert rule["beta_min_intensity"] == 2000
 
 
 class TestConfigRoundtrip:

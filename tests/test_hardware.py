@@ -1,10 +1,9 @@
-import sys
 from unittest.mock import MagicMock, patch
 from pathlib import Path
 
 import pytest
 
-from src.hardware.pixet_manager import PixetManager, SDK_DIR
+from src.hardware.pixet_manager import PixetManager
 from src.hardware.multi_device import MultiDeviceController, SENSOR_IDS
 
 
