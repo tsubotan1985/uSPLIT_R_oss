@@ -1,0 +1,36 @@
+{
+  "selected_features": [
+    "area",
+    "area_bbox",
+    "extent",
+    "solidity",
+    "eccentricity",
+    "equivalent_diameter_area",
+    "intensity_max",
+    "intensity_mean",
+    "intensity_min_max_ratio",
+    "intensity_std",
+    "intensity_skewness",
+    "intensity_kurtosis",
+    "aspect_ratio_advanced",
+    "fractal_dimension"
+  ],
+  "feature_selection_method": "all",
+  "total_features": 14,
+  "selected_feature_count": 14,
+  "training_timestamp": "2026-01-20 14:23:38",
+  "model_type": "LGBM",
+  "optimization_enabled": false,
+  "performance_metrics": {
+    "accuracy": 0.779338327091136,
+    "precision": 0.7809009136917703,
+    "recall": 0.7793383270911362,
+    "f1_score": 0.7786656844663654
+  },
+  "training_config": {
+    "alpha_intensity_threshold": 1000,
+    "alpha_clusters_original": 22072,
+    "alpha_clusters_filtered": 21796,
+    "alpha_clusters_excluded": 276
+  }
+}
